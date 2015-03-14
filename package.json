@@ -1,0 +1,12 @@
+{
+  "name": "node_worker_bee",
+  "description": "Example project of REST API, and web workers",
+  "version": "0.0.1",
+  "private": false,
+  "author": "Bill Shelton",
+  "dependencies": {
+    "express": "^4.12.2",
+    "mongoose": "^3.8.25",
+    "webworker": "^0.8.4"
+  }
+}
