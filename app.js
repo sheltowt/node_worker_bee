@@ -4,7 +4,9 @@ var application_root = __dirname,
   http = require('http'),
   mongoose = require('mongoose'),
   bodyParser = require('body-parser'),
-  autoIncrement = require('mongoose-auto-increment');
+  autoIncrement = require('mongoose-auto-increment')
+  workerFarm = require('worker-farm'),
+  twitterWorker = workerFarm(require.resolve('./workers/twitter'));
 
 var app = express();
 app.use(bodyParser.json())
@@ -56,9 +58,18 @@ app.post('/api/workers', function (req, res){
     data: req.body.data,
     modified: req.body.modified
   });
+  for (var i = 0; i <10; i++) {
+  	twitterWorker('#' + i + ' FOO', function (err, outp) {
+  		console.log(outp)
+  		if (i == 10) {
+  			workerFarm.end(twitterWorker)
+  		}
+  	})
+  }
   worker.save(function (err) {
     if (!err) {
       return console.log("created");
+
     } else {
       return console.log(err);
     }
