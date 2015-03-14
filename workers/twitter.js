@@ -21,14 +21,13 @@ var WorkerModel = connection.model('Worker', Worker);
 practice = "http://echo.jsontest.com/key/value/one/two"
 
 module.exports = function (url, callback) {
-	callback(null, url + ' BAR (' + process.pid + ')')
 
 	var options ={
-		host: 'http://echo.jsontest.com',
+		host: 'echo.jsontest.com',
 		path: '/key/value/one/two'
 	}
 
-	var request = http.request(options, function (res) {
+	callback = http.request(options, function (res) {
 		var data = '';
     res.on('data', function (chunk) {
         data += chunk;
@@ -49,9 +48,9 @@ module.exports = function (url, callback) {
     });
 	});
 
-	request.on('error', function (e) {
+	callback.on('error', function (e) {
     console.log(e.message);
 	});
-	request.end();
+	callback.end();
 
 }

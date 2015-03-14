@@ -57,14 +57,10 @@ app.post('/api/jobs', function (req, res){
     url: req.body.url,
     modified: req.body.modified
   });
-  for (var i = 0; i <10; i++) {
-  	twitterWorker("http://echo.jsontest.com/key/value/one/two", function (err, outp) {
-  		console.log(outp)
-  		if (i == 10) {
-  			workerFarm.end(twitterWorker)
-  		}
-  	})
-  }
+	twitterWorker("http://echo.jsontest.com/key/value/one/two", function (err, outp) {
+		console.log(outp)
+		workerFarm.end(twitterWorker)
+	})
   job.save(function (err) {
     if (!err) {
       return console.log("created");
