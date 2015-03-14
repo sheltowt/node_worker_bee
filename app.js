@@ -6,12 +6,17 @@ var application_root = __dirname,
   bodyParser = require('body-parser'),
   autoIncrement = require('mongoose-auto-increment'),
   workerFarm = require('worker-farm'),
-  twitterWorker = workerFarm(require.resolve('./workers/twitter'));
+  twitterWorker = workerFarm(require.resolve('./workers/twitter')),
+  queue = require('queue');
 
 var app = express();
 app.use(bodyParser.json())
 
 app.use(express.static(path.join(application_root, "public")));
+
+//initialize queue
+var queue = require('queue');
+var q = queue();
 
 // Database
 var connection = mongoose.connect('mongodb://localhost/workers');
@@ -57,18 +62,17 @@ app.post('/api/jobs', function (req, res){
     url: req.body.url,
     modified: req.body.modified
   });
-	twitterWorker("http://echo.jsontest.com/key/value/one/two", function (err, outp) {
-		console.log(outp)
-		workerFarm.end(twitterWorker)
-	})
-  job.save(function (err) {
+  job.save(function (err, jobData) {
     if (!err) {
-      return console.log("created");
-
+			twitterWorker("http://echo.jsontest.com/key/value/one/two", jobData, function (err, outp) {
+				console.log(outp)
+				workerFarm.end(twitterWorker)
+			})
     } else {
-      return console.log(err);
+      console.log(err);
     }
   });
+
   return res.send(job);
 });
 

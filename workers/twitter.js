@@ -14,13 +14,24 @@ var Worker = new Schema({
     modified: { type: Date, default: Date.now }
 });
 
+var Job = new Schema({
+		id: Schema.Types.ObjectId, 
+    status: { type: String, required: true },  
+    url: { type: String, required: true },   
+    modified: { type: Date, default: Date.now }
+});
+
+Job.plugin(autoIncrement.plugin, 'JobModel')
+
+var JobModel = connection.model('Job', Job);
+
 Worker.plugin(autoIncrement.plugin, 'WorkerModel')
 
 var WorkerModel = connection.model('Worker', Worker);
 
 practice = "http://echo.jsontest.com/key/value/one/two"
 
-module.exports = function (url, callback) {
+module.exports = function (url, jobData, callback) {
 
 	var options ={
 		host: 'echo.jsontest.com',
@@ -34,13 +45,22 @@ module.exports = function (url, callback) {
     });
     res.on('end', function () {
       console.log(data);
+
       worker = new WorkerModel({
       	url: url,
-      	result: data
+      	result: JSON.parse(data)
       });
       worker.save(function (err) {
     		if (!err) {
-      		return console.log("created");
+      		console.log("worker saved");
+      		console.log(jobData)
+				  JobModel.update({ _id: jobData._id}, { $set: {status: 'complete'}}, function(err){
+						if (!err) {
+							return console.log("job updated");
+						} else {
+							return console.log("job failed to update");
+						}
+					});
     		} else {
       		return console.log(err);
     		}
