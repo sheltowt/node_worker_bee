@@ -17,7 +17,7 @@ app.use(express.static(path.join(application_root, "public")));
 var queue = require('queue');
 q = queue();
 
-q.timeout = 100;
+q.timeout = 300;
 
 q.on('timeout', function(next, job) {
   console.log('job timed out:', job.toString().replace(/\n/g, ''));
