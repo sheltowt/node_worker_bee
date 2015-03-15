@@ -19,16 +19,10 @@ q = queue();
 
 q.timeout = 300;
 
-q.emit('success')
-
 q.on('timeout', function(next, job) {
   console.log('job timed out:', job.toString().replace(/\n/g, ''));
   next();
 });
-
-q.on('success', function(result, job) {
-  console.log('Finished processing job', result, job);
-})
 
 app.get('/status', function (req, res) {
 	console.log('Node Worker Bee API is running');
@@ -49,8 +43,6 @@ app.get('/api/jobs', function (req, res){
 app.post('/api/jobs', function (req, res){
 	console.log('POST /api/jobs');
   var worker;
-  console.log("POST: ");
-  console.log(req.body);
   job = new models.JobModel({
     status: 'Queued',
     url: req.body.url,
