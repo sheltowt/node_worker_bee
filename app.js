@@ -46,7 +46,7 @@ app.post('/api/jobs', function (req, res){
   job = new models.JobModel({
     status: 'Queued',
     url: req.body.url,
-    modified: req.body.modified
+    description: req.body.description
   });
   job.save(function (err, jobData) {
     if (!err) {
@@ -80,27 +80,34 @@ app.get('/api/jobs/:id', function (req, res){
 app.put('/api/jobs/:id', function (req, res){
 	console.log('PUT /api/jobs/id');
   return models.JobModel.findById(req.params.id, function (err, job) {
-    if (req.body.url != job.url) {
-      job.url = req.body.url
-      q.push(function(){
-        twitterWorker(req.body.url, job, function (err, outp) {
-          console.log(outp)
-          workerFarm.end(twitterWorker)
-        })
-      });
-      q.start(function(err) {
-        console.log('all done:', err);
-      });
-    }
-    job.description = req.body.description;
-    return job.save(function (err) {
-      if (!err) {
-        console.log("updated");
-      } else {
-        console.log(err);
+    console.log(job)
+    if(!err && (job != null)) {
+      if (req.body.url != job.url) {
+        job.url = req.body.url;
+        job.status = 'Queued';
+        q.push(function(){
+          twitterWorker(req.body.url, job, function (err, outp) {
+            console.log(outp)
+            workerFarm.end(twitterWorker)
+          })
+        });
+        q.start(function(err) {
+          console.log('all done:', err);
+        });
       }
-      return res.send(job);
-    });
+      job.description = req.body.description;
+      return job.save(function (err) {
+        if (!err) {
+          console.log("updated");
+        } else {
+          console.log(err);
+        }
+        return res.send(job);
+      });
+    } else {
+      console.log(err);
+      return res.send('');
+    }
   });
 });
 
