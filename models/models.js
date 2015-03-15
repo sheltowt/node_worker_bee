@@ -18,7 +18,8 @@ module.exports = (function() {
 		id: Schema.Types.ObjectId, 
     status: { type: String, required: true },  
     url: { type: String, required: true },   
-    modified: { type: Date, default: Date.now }
+    modified: { type: Date, default: Date.now },
+    description: { type: String, required: false },
 	});
 
 	Job.plugin(autoIncrement.plugin, 'JobModel');

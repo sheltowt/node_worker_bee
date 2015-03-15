@@ -5,12 +5,7 @@ practice = "http://echo.jsontest.com/key/value/one/two"
 
 module.exports = function (url, jobData, callback) {
 
-	var options ={
-		host: 'echo.jsontest.com',
-		path: '/key/value/one/two'
-	}
-
-	callback = http.request(options, function (res) {
+	callback = http.request(url, function (res) {
 		var data = '';
     res.on('data', function (chunk) {
         data += chunk;
@@ -26,7 +21,7 @@ module.exports = function (url, jobData, callback) {
     		if (!err) {
       		console.log("worker saved");
       		console.log(jobData)
-				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'complete'}}, function(err){
+				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'Completed'}}, function(err){
 						if (!err) {
 							return console.log("job updated");
 						} else {

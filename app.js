@@ -39,13 +39,13 @@ app.post('/api/jobs', function (req, res){
   console.log("POST: ");
   console.log(req.body);
   job = new models.JobModel({
-    status: req.body.status,
+    status: 'Queued',
     url: req.body.url,
     modified: req.body.modified
   });
   job.save(function (err, jobData) {
     if (!err) {
-			twitterWorker("http://echo.jsontest.com/key/value/one/two", jobData, function (err, outp) {
+			twitterWorker(req.body.url, jobData, function (err, outp) {
 				console.log(outp)
 				workerFarm.end(twitterWorker)
 			})
@@ -71,9 +71,7 @@ app.get('/api/jobs/:id', function (req, res){
 app.put('/api/jobs/:id', function (req, res){
 	console.log('PUT /api/jobs/id');
   return models.JobModel.findById(req.params.id, function (err, job) {
-    job.title = req.body.url;
     job.description = req.body.description;
-    job.style = req.body.style;
     return job.save(function (err) {
       if (!err) {
         console.log("updated");
