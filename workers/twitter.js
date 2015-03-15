@@ -19,7 +19,7 @@ module.exports = function (url, jobData, callback) {
       worker.save(function (err, workerData) {
     		if (!err) {
       		console.log("worker saved");
-				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'Completed', workerId: workerData._id}}, function(err){
+				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'Completed', lastWorkerId: workerData._id, result: JSON.parse(data)}}, function(err){
 						if (!err) {
 							return console.log("job updated");
 						} else {

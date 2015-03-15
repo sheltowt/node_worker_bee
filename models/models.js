@@ -17,11 +17,12 @@ module.exports = (function() {
 
 	var Job = new Schema({
 		id: Schema.Types.ObjectId, 
-		workerId: { type: Number, required: false },
+		lastWorkerId: { type: Number, required: false },
     status: { type: String, required: true },  
     url: { type: String, required: true },   
     modified: { type: Date, default: Date.now },
     description: { type: String, required: false },
+    result: { type: Schema.Types.Mixed, required: false },
 	});
 
 	Job.plugin(autoIncrement.plugin, 'JobModel');
