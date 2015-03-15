@@ -2,12 +2,11 @@ var application_root = __dirname,
 	express = require("express"),
   path = require("path"),
   http = require('http'),
-  mongoose = require('mongoose'),
   bodyParser = require('body-parser'),
-  autoIncrement = require('mongoose-auto-increment'),
   workerFarm = require('worker-farm'),
   twitterWorker = workerFarm(require.resolve('./workers/twitter')),
-  queue = require('queue');
+  queue = require('queue'),
+  models = require('./models/models')();;
 
 var app = express();
 app.use(bodyParser.json())
@@ -18,24 +17,6 @@ app.use(express.static(path.join(application_root, "public")));
 var queue = require('queue');
 var q = queue();
 
-// Database
-var connection = mongoose.connect('mongodb://localhost/workers');
-
-autoIncrement.initialize(connection);
-
-var Schema = mongoose.Schema;  
-
-var Job = new Schema({
-		id: Schema.Types.ObjectId, 
-    status: { type: String, required: true },  
-    url: { type: String, required: true },   
-    modified: { type: Date, default: Date.now }
-});
-
-Job.plugin(autoIncrement.plugin, 'JobModel')
-
-var JobModel = connection.model('Job', Job);
-
 app.get('/api', function (req, res) {
 	console.log('Node Worker Bee API is running');
   res.send('Node Worker Bee API is running');
@@ -43,7 +24,7 @@ app.get('/api', function (req, res) {
 
 app.get('/api/jobs', function (req, res){
 	console.log('GET /api/jobs');
-  return JobModel.find(function (err, jobs) {
+  return models.JobModel.find(function (err, jobs) {
     if (!err) {
       return res.send(jobs);
     } else {
@@ -57,7 +38,7 @@ app.post('/api/jobs', function (req, res){
   var worker;
   console.log("POST: ");
   console.log(req.body);
-  job = new JobModel({
+  job = new models.JobModel({
     status: req.body.status,
     url: req.body.url,
     modified: req.body.modified
@@ -78,7 +59,7 @@ app.post('/api/jobs', function (req, res){
 
 app.get('/api/jobs/:id', function (req, res){
 	console.log('GET /api/jobs/id');
-  return JobModel.findById(req.params.id, function (err, job) {
+  return models.JobModel.findById(req.params.id, function (err, job) {
     if (!err) {
       return res.send(job);
     } else {
@@ -89,7 +70,7 @@ app.get('/api/jobs/:id', function (req, res){
 
 app.put('/api/jobs/:id', function (req, res){
 	console.log('PUT /api/jobs/id');
-  return JobModel.findById(req.params.id, function (err, job) {
+  return models.JobModel.findById(req.params.id, function (err, job) {
     job.title = req.body.url;
     job.description = req.body.description;
     job.style = req.body.style;
@@ -106,7 +87,7 @@ app.put('/api/jobs/:id', function (req, res){
 
 app.delete('/api/jobs/:id', function (req, res){
 	console.log('DELETE /api/jobs/id');
-  return JobModel.findById(req.params.id, function (err, job) {
+  return models.JobModel.findById(req.params.id, function (err, job) {
     return job.remove(function (err) {
       if (!err) {
         console.log("removed");
