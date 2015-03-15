@@ -13,9 +13,20 @@ app.use(bodyParser.json())
 
 app.use(express.static(path.join(application_root, "public")));
 
-//initialize queue
+// initialize queue
 var queue = require('queue');
-var q = queue();
+q = queue();
+
+q.timeout = 100;
+
+q.on('timeout', function(next, job) {
+  console.log('job timed out:', job.toString().replace(/\n/g, ''));
+  next();
+});
+
+q.on('success', function(result, job) {
+  console.log('Finished processing job', result, job);
+})
 
 app.get('/status', function (req, res) {
 	console.log('Node Worker Bee API is running');
@@ -45,15 +56,19 @@ app.post('/api/jobs', function (req, res){
   });
   job.save(function (err, jobData) {
     if (!err) {
-			twitterWorker(req.body.url, jobData, function (err, outp) {
-				console.log(outp)
-				workerFarm.end(twitterWorker)
-			})
+      q.push(function(){
+        twitterWorker(req.body.url, jobData, function (err, outp) {
+          console.log(outp)
+          workerFarm.end(twitterWorker)
+        })
+      });
+      q.start(function(err) {
+        console.log('all done:', err);
+      });
     } else {
       console.log(err);
     }
   });
-
   return res.send(job);
 });
 

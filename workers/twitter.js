@@ -1,8 +1,6 @@
 var http = require('http'),
 	models = require('../models/models');
 
-practice = "http://echo.jsontest.com/key/value/one/two"
-
 module.exports = function (url, jobData, callback) {
 
 	callback = http.request(url, function (res) {
@@ -14,14 +12,15 @@ module.exports = function (url, jobData, callback) {
       console.log(data);
 
       worker = new models.WorkerModel({
+      	jobId: jobData._id,
       	url: url,
       	result: JSON.parse(data)
       });
-      worker.save(function (err) {
+      worker.save(function (err, workerData) {
     		if (!err) {
       		console.log("worker saved");
       		console.log(jobData)
-				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'Completed'}}, function(err){
+				  models.JobModel.update({ _id: jobData._id}, { $set: {status: 'Completed', workerId: workerData._id}}, function(err){
 						if (!err) {
 							return console.log("job updated");
 						} else {

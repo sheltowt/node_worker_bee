@@ -8,14 +8,16 @@ module.exports = (function() {
 	var Schema = mongoose.Schema; 
 
 	var Worker = new Schema({
-			id: Schema.Types.ObjectId,
-			url: { type: String, required: true }, 
-	    result: { type: Schema.Types.Mixed, required: false },   
-	    modified: { type: Date, default: Date.now }
+		id: Schema.Types.ObjectId,
+		jobId: { type: Number, required: false },
+		url: { type: String, required: true }, 
+    result: { type: Schema.Types.Mixed, required: false },   
+    modified: { type: Date, default: Date.now }
 	});
 
 	var Job = new Schema({
 		id: Schema.Types.ObjectId, 
+		workerId: { type: Number, required: false },
     status: { type: String, required: true },  
     url: { type: String, required: true },   
     modified: { type: Date, default: Date.now },
