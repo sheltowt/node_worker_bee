@@ -19,6 +19,8 @@ q = queue();
 
 q.timeout = 300;
 
+q.emit('success')
+
 q.on('timeout', function(next, job) {
   console.log('job timed out:', job.toString().replace(/\n/g, ''));
   next();
