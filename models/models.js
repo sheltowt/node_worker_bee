@@ -29,6 +29,6 @@ module.exports = function() {
 		WorkerModel: connection.model('Worker', Worker)
 	}
 
-	return models
+	return models;
 
-}
+};

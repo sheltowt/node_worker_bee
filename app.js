@@ -6,7 +6,7 @@ var application_root = __dirname,
   workerFarm = require('worker-farm'),
   twitterWorker = workerFarm(require.resolve('./workers/twitter')),
   queue = require('queue'),
-  models = require('./models/models')();;
+  models = require('./models/models')();
 
 var app = express();
 app.use(bodyParser.json())
@@ -17,7 +17,7 @@ app.use(express.static(path.join(application_root, "public")));
 var queue = require('queue');
 var q = queue();
 
-app.get('/api', function (req, res) {
+app.get('/status', function (req, res) {
 	console.log('Node Worker Bee API is running');
   res.send('Node Worker Bee API is running');
 });

@@ -45,4 +45,4 @@ module.exports = function (url, jobData, callback) {
 	});
 	callback.end();
 
-}
+};
