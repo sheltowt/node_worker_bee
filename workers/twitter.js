@@ -1,5 +1,5 @@
 var http = require('http'),
-	models = require('../models/models')();
+	models = require('../models/models');
 
 practice = "http://echo.jsontest.com/key/value/one/two"
 

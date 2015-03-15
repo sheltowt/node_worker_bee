@@ -6,7 +6,7 @@ var application_root = __dirname,
   workerFarm = require('worker-farm'),
   twitterWorker = workerFarm(require.resolve('./workers/twitter')),
   queue = require('queue'),
-  models = require('./models/models')();
+  models = require('./models/models');
 
 var app = express();
 app.use(bodyParser.json())

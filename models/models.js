@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
 	autoIncrement = require('mongoose-auto-increment'),
 	connection = mongoose.connect('mongodb://localhost/workers');
 
-module.exports = function() {
+module.exports = (function() {
 	autoIncrement.initialize(connection);
 
 	var Schema = mongoose.Schema; 
@@ -31,4 +31,4 @@ module.exports = function() {
 
 	return models;
 
-};
+})();
