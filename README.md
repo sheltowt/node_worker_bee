@@ -9,5 +9,3 @@ TO get up and running:
 1.  Install node, mongodb
 2.  npm install
 3.  In root directory type node app.js
-4.  Navigate to localhost:3000
-5.  Open console and use JQuery commands in examples folder to interact with the API

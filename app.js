@@ -4,7 +4,7 @@ var application_root = __dirname,
   http = require('http'),
   bodyParser = require('body-parser'),
   workerFarm = require('worker-farm'),
-  twitterWorker = workerFarm(require.resolve('./workers/twitter')),
+  twitterWorker = workerFarm(require.resolve('./workers/url_retriever')),
   queue = require('queue'),
   models = require('./models/models');
 
