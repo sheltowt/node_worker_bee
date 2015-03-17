@@ -24,6 +24,13 @@ q.on('timeout', function(next, job) {
   next();
 });
 
+q.emit('end')
+
+q.on('end', function(result, job) {
+  console.log("successfull finished queue");
+  workerFarm.end(urlWorker);
+});
+
 app.get('/status', function (req, res) {
 	console.log('Node Worker Bee API is running');
   res.send('Node Worker Bee API is running');
@@ -83,7 +90,7 @@ app.put('/api/jobs/:id', function (req, res){
         job.url = req.body.url;
         job.status = 'Queued';
         q.push(function(){
-          urlWorker(req.body.url, job)
+          urlWorker(req.body.url, jobData)
         });
         q.start(function(err) {
           console.log('all done:', err);

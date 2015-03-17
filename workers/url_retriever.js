@@ -3,7 +3,7 @@ var http = require('http'),
 
 module.exports = function (url, jobData) {
 
-	callback = http.request(url, function (res) {
+	retrieveData = http.request(url, function (res) {
 		var data = '';
     res.on('data', function (chunk) {
         data += chunk;
@@ -33,9 +33,9 @@ module.exports = function (url, jobData) {
     });
 	});
 
-	callback.on('error', function (e) {
+	retrieveData.on('error', function (e) {
     console.log(e.message);
 	});
-	callback.end();
+	retrieveData.end();
 
 };
