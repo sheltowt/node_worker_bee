@@ -1,7 +1,7 @@
 var http = require('http'),
 	models = require('../models/models');
 
-module.exports = function (url, jobData, callback) {
+module.exports = function (url, jobData) {
 
 	callback = http.request(url, function (res) {
 		var data = '';

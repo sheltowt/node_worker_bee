@@ -4,7 +4,7 @@ var application_root = __dirname,
   http = require('http'),
   bodyParser = require('body-parser'),
   workerFarm = require('worker-farm'),
-  twitterWorker = workerFarm(require.resolve('./workers/url_retriever')),
+  urlWorker = workerFarm(require.resolve('./workers/url_retriever')),
   queue = require('queue'),
   models = require('./models/models');
 
@@ -51,10 +51,7 @@ app.post('/api/jobs', function (req, res){
   job.save(function (err, jobData) {
     if (!err) {
       q.push(function(){
-        twitterWorker(req.body.url, jobData, function (err, outp) {
-          console.log(outp)
-          workerFarm.end(twitterWorker)
-        })
+        urlWorker(req.body.url, jobData)
       });
       q.start(function(err) {
         console.log('all done:', err);
@@ -86,10 +83,7 @@ app.put('/api/jobs/:id', function (req, res){
         job.url = req.body.url;
         job.status = 'Queued';
         q.push(function(){
-          twitterWorker(req.body.url, job, function (err, outp) {
-            console.log(outp)
-            workerFarm.end(twitterWorker)
-          })
+          urlWorker(req.body.url, job)
         });
         q.start(function(err) {
           console.log('all done:', err);
