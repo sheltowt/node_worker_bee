@@ -31,6 +31,16 @@ q.on('end', function(result, job) {
   workerFarm.end(urlWorker);
 });
 
+var checkQueueAndStart = function() {
+  if(q.length >= 1){
+    q.start(function(err) {
+      console.log('all done:', err);
+    });
+  }
+}
+setInterval(checkQueueAndStart, 1000)
+
+
 app.get('/status', function (req, res) {
 	console.log('Node Worker Bee API is running');
   res.send('Node Worker Bee API is running');
@@ -60,9 +70,6 @@ app.post('/api/jobs', function (req, res){
       q.push(function(){
         urlWorker(req.body.url, jobData)
       });
-      q.start(function(err) {
-        console.log('all done:', err);
-      });
     } else {
       console.log(err);
     }
@@ -91,9 +98,6 @@ app.put('/api/jobs/:id', function (req, res){
         job.status = 'Queued';
         q.push(function(){
           urlWorker(req.body.url, jobData)
-        });
-        q.start(function(err) {
-          console.log('all done:', err);
         });
       }
       job.description = req.body.description;
